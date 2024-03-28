@@ -10,6 +10,7 @@ class AnimatedTextWidget extends StatefulWidget {
 class _AnimatedTextWidgetState extends State<AnimatedTextWidget> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _sizeAnimation;
+  late Animation<Color?> _colorAnimation; // Dodajemy animację koloru
 
   @override
   void initState() {
@@ -22,25 +23,35 @@ class _AnimatedTextWidgetState extends State<AnimatedTextWidget> with SingleTick
     _sizeAnimation = Tween<double>(begin: 1.0, end: 2.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
-  }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    // Inicjalizacja animacji koloru
+    _colorAnimation = ColorTween(
+      begin: Color.fromARGB(255, 255, 208, 0),
+      end: Color.fromARGB(255, 0, 242, 250),
+    ).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _sizeAnimation,
+      animation: _controller,
       builder: (context, child) {
         return Transform.scale(
           scale: _sizeAnimation.value,
-          child: const Center(
-            child: Text(
-              'Wesołych Świąt!',
-              style: TextStyle(fontSize: 50, color: Colors.green, fontWeight: FontWeight.bold),
+          child: Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0), // Dodaje odstępy wokół tekstu
+              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.4), // Półprzezroczyste tło dla tekstu
+              child: Text(
+                'Smacznego jajka i mokrego dyngusa!',
+                style: TextStyle(
+                  fontSize: 40,
+                  color: _colorAnimation.value, // Tutaj jest używana animacja koloru tekstu
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         );
@@ -48,3 +59,4 @@ class _AnimatedTextWidgetState extends State<AnimatedTextWidget> with SingleTick
     );
   }
 }
+

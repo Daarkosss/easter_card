@@ -13,6 +13,7 @@ class EasterCard extends StatefulWidget {
 
 class _EasterCardState extends State<EasterCard> with TickerProviderStateMixin {
   late AnimationController _controller;
+  List<Widget> chickens = [];
 
   @override
   void initState() {
@@ -20,9 +21,17 @@ class _EasterCardState extends State<EasterCard> with TickerProviderStateMixin {
     _controller = AnimationController(
       duration: const Duration(seconds: 10),
       vsync: this,
-    )..repeat();
+    );
+    _controller.forward();
+    chickens.add(AnimatedChicken(key: UniqueKey()));
   }
 
+  void addChicken() {
+    setState(() {
+      // Dodaj nowego kurczaka do listy, każdy z unikalnym kluczem
+      chickens.add(AnimatedChicken(key: UniqueKey()));
+    });
+  }
 
   @override
   void dispose() {
@@ -32,22 +41,40 @@ class _EasterCardState extends State<EasterCard> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/background.jpg"),
-          fit: BoxFit.cover,
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Stack(
+          children: const <Widget>[
+            AnimatedEgg(
+              margin: EdgeInsets.only(right: 100),
+            ),
+            AnimatedEgg(
+              margin: EdgeInsets.only(right: 1500),
+            ),            
+            JumpingBunny(offset: 0, delay: 0),
+            JumpingBunny(offset: 200, delay: 1500),
+            JumpingBunny(offset: 400, delay: 0),
+            JumpingBunny(offset: 600, delay: 1500),
+            JumpingBunny(offset: 800, delay: 0),
+            JumpingBunny(offset: 1000, delay: 1500),
+            JumpingBunny(offset: 1200, delay: 0),
+            JumpingBunny(offset: 1400, delay: 1500),
+            JumpingBunny(offset: 1600, delay: 0),
+            AnimatedTextWidget()
+          ] + chickens,
         ),
       ),
-      child: Stack(
-        children: const <Widget>[
-          AnimatedEgg(),
-          AnimatedChicken(),
-          JumpingBunny(),
-          FadingBunny(),
-          AnimatedTextWidget()
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: addChicken,
+        child: Icon(Icons.add),
       ),
     );
   }
 }
+

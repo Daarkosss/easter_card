@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class JumpingBunny extends StatefulWidget {
-  const JumpingBunny({Key? key}) : super(key: key);
+  final double offset; // Pozycjonowanie królika
+  final int delay; // Opóźnienie animacji w milisekundach
+
+  const JumpingBunny({Key? key, required this.offset, this.delay = 0}) : super(key: key);
 
   @override
   _JumpingBunnyState createState() => _JumpingBunnyState();
@@ -17,11 +20,16 @@ class _JumpingBunnyState extends State<JumpingBunny> with SingleTickerProviderSt
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
-    )..repeat(reverse: true);
+    );
 
     _jumpAnimation = Tween<double>(begin: 0, end: -50).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+
+    // Opóźnienie rozpoczęcia animacji
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      _controller.repeat(reverse: true);
+    });
   }
 
   @override
@@ -35,15 +43,17 @@ class _JumpingBunnyState extends State<JumpingBunny> with SingleTickerProviderSt
     return AnimatedBuilder(
       animation: _jumpAnimation,
       builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, _jumpAnimation.value),
-          child: child,
+        return Positioned(
+          left: widget.offset,
+          bottom: 20 + _jumpAnimation.value,
+          child: child!,
         );
       },
-      child: Image.asset('assets/images/bunny.png', width: 100),
+      child: Image.asset('assets/images/bunny.png', width: 300),
     );
   }
 }
+
 
 class FadingBunny extends StatefulWidget {
   const FadingBunny({Key? key}) : super(key: key);
@@ -79,7 +89,7 @@ class _FadingBunnyState extends State<FadingBunny> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _opacityAnimation,
-      child: Image.asset('assets/images/bunny.png', width: 100),
+      child: Image.asset('assets/images/bunny.png', width: 400),
     );
   }
 }
