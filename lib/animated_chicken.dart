@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
 
 
 class AnimatedChicken extends StatefulWidget {
-  final VoidCallback? onRestartAnimation;
 
-  const AnimatedChicken({Key? key, this.onRestartAnimation}) : super(key: key);
+  const AnimatedChicken({Key? key}) : super(key: key);
 
   @override
   _AnimatedChickenState createState() => _AnimatedChickenState();
 }
 class _AnimatedChickenState extends State<AnimatedChicken> with TickerProviderStateMixin {
   late AnimationController _controller;
+  final audioPlayer = AudioPlayer();
   late Animation<double> _opacityAnimation;
   late Animation<Offset> _moveToCenterAnimation;
   late Animation<double> _scaleAnimation;
@@ -21,13 +22,18 @@ class _AnimatedChickenState extends State<AnimatedChicken> with TickerProviderSt
   void initState() {
     super.initState();
     final random = Random();
-    final durationSeconds = random.nextInt(11) + 5; // Generuje liczbę od 5 do 15
+    final durationSeconds = random.nextInt(9) + 4; // Generuje liczbę od 4 do 12
 
-    widget.onRestartAnimation?.call();
     _controller = AnimationController(
       duration: Duration(seconds: durationSeconds),
       vsync: this,
     );
+
+    Future<void> playSound() async {
+      final player = AudioCache(prefix: 'assets/audio/');
+      final url = await player.load('chicken-sound.mp3');
+      audioPlayer.play(url.path, isLocal: true);
+    }
 
     // Animacja przezroczystości (pojawienie się)
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -68,6 +74,7 @@ class _AnimatedChickenState extends State<AnimatedChicken> with TickerProviderSt
     );
 
     _controller.forward();
+    playSound();
   }
 
   @override
