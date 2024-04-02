@@ -1,6 +1,5 @@
-# easter_card
-
-A new Flutter project.
+# Easter card
+Animated Easter card with Flutter.
 
 # How to run it?
 Use command:
